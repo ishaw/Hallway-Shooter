@@ -60,16 +60,22 @@ int main()
     
     ISceneNode* gun_n = smgr->addAnimatedMeshSceneNode(gun_m, camera, -1);
     
-    gun_n->setPosition(vector3df(10,-5,20));
-    
+    gun_n->setPosition(vector3df(10,-5,20));	
+
     if(selector)
     {
                 ISceneNodeAnimator* anim = smgr->createCollisionResponseAnimator(selector, camera, vector3df(30, 50, 30),
                                     vector3df(0, -10, 0), vector3df(0, 30, 0));
-                selector->drop();
                 camera->addAnimator(anim);
                 anim->drop();
     }
+
+	ISceneNodeAnimatorCollisionResponse* collresp = smgr->createCollisionResponseAnimator(selector, camera, vector3df(30,50,30), vector3df(0,0,0), vector3df(0, 30, 0));
+
+	//ISceneNode* collided_node = collresp->getCollisionNode();
+
+	selector->drop();
+
     
 	device->getCursorControl()->setVisible(false);
 
@@ -82,7 +88,12 @@ int main()
 			driver->beginScene(true, true, video::SColor(255,200,200,200));
 			smgr->drawAll();
 			driver->endScene();
-			
+
+			if(collresp->collisionOccurred())
+			{
+				cout<<"collision has occurred!"<<endl;
+			}
+
 			int fps = driver->getFPS();
 
 			if (lastFPS != fps)
