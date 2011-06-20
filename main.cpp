@@ -1,4 +1,7 @@
-#include <irrlicht.h>
+
+#include "Input.h"
+
+#include <irrlicht/irrlicht.h>
 #include <iostream>
 
 using namespace irr;
