@@ -33,6 +33,49 @@ IrrlichtDevice *device =
 IVideoDriver* driver = device->getVideoDriver();
 ISceneManager* smgr = device->getSceneManager();
 
+struct Actor
+{
+    IAnimatedMesh* mesh;
+    IAnimatedMeshSceneNode* node;
+
+    Actor( const char* meshFile, const char* textureFile, 
+           ISceneNode* parent=0, int id=0 )
+        : mesh( smgr->getMesh( meshFile )                          )
+        , node( smgr->addAnimatedMeshSceneNode( mesh, parent, id ) )
+    {
+        node->setMaterialFlag( EMF_LIGHTING, true );
+        node->setMaterialTexture( 0, driver->getTexture(textureFile) );
+    }
+
+    void state( vector3df pos, vector3df rot = vector3df(0,0,0) )
+    {
+        node->setPosition( pos );
+        node->setRotation( rot );
+    }
+
+    ~Actor()
+    {
+        mesh->drop();
+        node->drop();
+    }
+};
+
+IAnimatedMeshSceneNode* animated_node( const char* meshFile, const char* textureFile, ISceneNode* parent=0, int id=0 )
+{
+    IAnimatedMesh* mesh          = smgr->getMesh( meshFile );
+    IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh, parent, id );
+
+    node->setMaterialFlag( EMF_LIGHTING, true );
+    node->setMaterialTexture( 0, driver->getTexture(textureFile) );
+
+    return node;
+}
+
+void set_state( IAnimatedMeshSceneNode* node, vector3df pos, vector3df rot = vector3df(0,0,0) )
+{
+    node->setPosition( pos );
+    node->setRotation( rot );
+}
 
 bool initialize()
 {
@@ -64,11 +107,9 @@ bool initialize()
     camera->setPosition(vector3df(0, 50 , 0));
     
     //adding a cube to play with collision detection
-    IAnimatedMesh* cube_mesh = smgr->getMesh("media/Meshes/cube.obj");
-    IAnimatedMeshSceneNode* cube_node = smgr->addAnimatedMeshSceneNode(cube_mesh);
-    cube_node->setMaterialFlag(EMF_LIGHTING, false);
-    cube_node->setMaterialTexture(0, driver->getTexture("media/Textures/cube.jpg"));
-    cube_node->setPosition(vector3df(290,128,456));
+    //IAnimatedMesh* cube_mesh = smgr->getMesh("media/Meshes/cube.obj");
+    IAnimatedMeshSceneNode* cube_node = animated_node( "media/Meshes/cube.obj", "media/Textures/cube.jpg" );
+    set_state( cube_node, vector3df(290,128,456) );
     
     //added FPS weapon
     IAnimatedMesh* gun_mesh = smgr->getMesh("media/Meshes/gun.md2");
@@ -77,6 +118,7 @@ bool initialize()
     gun_node->setMaterialTexture(0, driver->getTexture("gun.jpg"));
     gun_node->setLoopMode(true);
     gun_node->setMD2Animation("idle");
+    gun_mesh->drop();
 
     if(selector)
     {
