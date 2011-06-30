@@ -3,7 +3,6 @@
 
 #include <irrlicht/irrlicht.h>
 #include <iostream>
-#include <irrbullet.h>
 
 using namespace irr;
 using namespace core;
@@ -33,7 +32,6 @@ IrrlichtDevice *device =
 
 IVideoDriver* driver = device->getVideoDriver();
 ISceneManager* smgr = device->getSceneManager();
-world =
 
 int main()
 {
@@ -41,7 +39,7 @@ int main()
 	if (device == 0)
 		return 1; 
 
-	device->getFileSystem()->addZipFileArchive("./map-20kdm2.pk3");
+	device->getFileSystem()->addZipFileArchive("./media/Meshes/map-20kdm2.pk3");
 
 	IAnimatedMesh* level_mesh = smgr->getMesh("20kdm2.bsp");
 	IMeshSceneNode* level_node = 0;
@@ -66,14 +64,14 @@ int main()
     camera->setPosition(vector3df(0, 50 , 0));
     
 	//adding a cube to play with collision detection
-	IAnimatedMesh* cube_mesh = smgr->getMesh("cube.obj");
+	IAnimatedMesh* cube_mesh = smgr->getMesh("media/Meshes/cube.obj");
 	IAnimatedMeshSceneNode* cube_node = smgr->addAnimatedMeshSceneNode(cube_mesh);
 	cube_node->setMaterialFlag(EMF_LIGHTING, false);
-	cube_node->setMaterialTexture(0, driver->getTexture("cube.jpg"));
+	cube_node->setMaterialTexture(0, driver->getTexture("media/Textures/cube.jpg"));
 	cube_node->setPosition(vector3df(290,128,456));
     
 	//added FPS weapon
-	IAnimatedMesh* gun_mesh = smgr->getMesh("gun.md2");
+	IAnimatedMesh* gun_mesh = smgr->getMesh("media/Meshes/gun.md2");
     IAnimatedMeshSceneNode* gun_node = smgr->addAnimatedMeshSceneNode(gun_mesh, smgr->getActiveCamera(), 10, vector3df(0,0,0), vector3df(-90,-90,90));
     gun_node->setMaterialFlag(EMF_LIGHTING, false);
 	gun_node->setMaterialTexture(0, driver->getTexture("gun.jpg"));
