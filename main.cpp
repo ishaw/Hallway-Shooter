@@ -3,6 +3,7 @@
 
 #include <irrlicht/irrlicht.h>
 #include <iostream>
+#include <memory>
 
 using namespace irr;
 using namespace core;
@@ -40,10 +41,10 @@ struct Actor
 
     Actor( const char* meshFile, const char* textureFile, 
            ISceneNode* parent=0, int id=0 )
-        : mesh( smgr->getMesh( meshFile )                          )
-        , node( smgr->addAnimatedMeshSceneNode( mesh, parent, id ) )
+        : mesh( smgr->getMesh(meshFile) )
+        , node( smgr->addAnimatedMeshSceneNode(mesh, parent, id) )
     {
-        node->setMaterialFlag( EMF_LIGHTING, true );
+        node->setMaterialFlag( EMF_LIGHTING, false );
         node->setMaterialTexture( 0, driver->getTexture(textureFile) );
     }
 
@@ -60,22 +61,9 @@ struct Actor
     }
 };
 
-IAnimatedMeshSceneNode* animated_node( const char* meshFile, const char* textureFile, ISceneNode* parent=0, int id=0 )
-{
-    IAnimatedMesh* mesh          = smgr->getMesh( meshFile );
-    IAnimatedMeshSceneNode* node = smgr->addAnimatedMeshSceneNode( mesh, parent, id );
+typedef std::unique_ptr< Actor > ActorPtr;
 
-    node->setMaterialFlag( EMF_LIGHTING, true );
-    node->setMaterialTexture( 0, driver->getTexture(textureFile) );
-
-    return node;
-}
-
-void set_state( IAnimatedMeshSceneNode* node, vector3df pos, vector3df rot = vector3df(0,0,0) )
-{
-    node->setPosition( pos );
-    node->setRotation( rot );
-}
+ActorPtr cube, gun;
 
 bool initialize()
 {
@@ -107,18 +95,14 @@ bool initialize()
     camera->setPosition(vector3df(0, 50 , 0));
     
     //adding a cube to play with collision detection
-    //IAnimatedMesh* cube_mesh = smgr->getMesh("media/Meshes/cube.obj");
-    IAnimatedMeshSceneNode* cube_node = animated_node( "media/Meshes/cube.obj", "media/Textures/cube.jpg" );
-    set_state( cube_node, vector3df(290,128,456) );
+    cube.reset( new Actor("media/Meshes/gun.md2", "media/Textures/cube.jpg") );
+    cube->state( vector3df(290,120,456) );
     
     //added FPS weapon
-    IAnimatedMesh* gun_mesh = smgr->getMesh("media/Meshes/gun.md2");
-    IAnimatedMeshSceneNode* gun_node = smgr->addAnimatedMeshSceneNode(gun_mesh, smgr->getActiveCamera(), 10, vector3df(0,0,0), vector3df(-90,-90,90));
-    gun_node->setMaterialFlag(EMF_LIGHTING, false);
-    gun_node->setMaterialTexture(0, driver->getTexture("gun.jpg"));
-    gun_node->setLoopMode(true);
-    gun_node->setMD2Animation("idle");
-    gun_mesh->drop();
+    gun.reset( new Actor("media/Meshes/gun.md2", "media/Textures/gun.jpg", camera) );
+    gun->state( vector3df(0,0,0), vector3df(-90,-90,90) );
+    gun->node->setLoopMode(true);
+    gun->node->setMD2Animation("idle");
 
     if(selector)
     {
