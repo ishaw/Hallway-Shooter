@@ -1,5 +1,6 @@
 
 #include "Input.h"
+#include "Engine.h"
 
 #include <irrlicht/irrlicht.h>
 #include <iostream>
@@ -27,12 +28,6 @@ enum
 
     IDFlag_IsHighlightable = 1 << 1
 };
-
-IrrlichtDevice *device =
-        createDevice(EDT_OPENGL, core::dimension2d<u32>(640, 480));
-
-IVideoDriver* driver = device->getVideoDriver();
-ISceneManager* smgr = device->getSceneManager();
 
 struct Actor
 {
