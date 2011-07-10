@@ -1,6 +1,7 @@
 
 #include "Input.h"
 #include "Engine.h"
+#include "Actor.h"
 
 #include <irrlicht/irrlicht.h>
 #include <iostream>
@@ -28,35 +29,6 @@ enum
 
     IDFlag_IsHighlightable = 1 << 1
 };
-
-struct Actor
-{
-    IAnimatedMesh* mesh;
-    IAnimatedMeshSceneNode* node;
-
-    Actor( const char* meshFile, const char* textureFile, 
-           ISceneNode* parent=0, int id=0 )
-        : mesh( smgr->getMesh(meshFile) )
-        , node( smgr->addAnimatedMeshSceneNode(mesh, parent, id) )
-    {
-        node->setMaterialFlag( EMF_LIGHTING, false );
-        node->setMaterialTexture( 0, driver->getTexture(textureFile) );
-    }
-
-    void state( vector3df pos, vector3df rot = vector3df(0,0,0) )
-    {
-        node->setPosition( pos );
-        node->setRotation( rot );
-    }
-
-    ~Actor()
-    {
-        mesh->drop();
-        node->drop();
-    }
-};
-
-typedef std::unique_ptr< Actor > ActorPtr;
 
 ActorPtr cube, gun;
 
