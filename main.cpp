@@ -6,6 +6,7 @@
 #include <irrlicht/irrlicht.h>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 using namespace irr;
 using namespace core;
@@ -30,7 +31,8 @@ enum
     IDFlag_IsHighlightable = 1 << 1
 };
 
-ActorPtr cube, gun;
+typedef std::vector< ActorPtr > ActorList;
+ActorList actors;
 
 bool initialize()
 {
@@ -62,14 +64,18 @@ bool initialize()
     camera->setPosition(vector3df(0, 50 , 0));
     
     //adding a cube to play with collision detection
-    cube.reset( new Actor("media/Meshes/gun.md2", "media/Textures/cube.jpg") );
+    ActorPtr cube( new Actor("media/Meshes/gun.md2", "media/Textures/cube.jpg") );
     cube->state( vector3df(290,120,456) );
     
     //added FPS weapon
-    gun.reset( new Actor("media/Meshes/gun.md2", "media/Textures/gun.jpg", camera) );
+    ActorPtr gun( new Actor("media/Meshes/gun.md2", "media/Textures/gun.jpg", camera) );
     gun->state( vector3df(0,0,0), vector3df(-90,-90,90) );
     gun->node->setLoopMode(true);
     gun->node->setMD2Animation("idle");
+
+    actors.push_back( std::move(gun)  );
+    actors.push_back( std::move(cube) );
+    // Using gun or cube beyond this point will cause an access violation.
 
     if(selector)
     {
