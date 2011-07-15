@@ -1,5 +1,5 @@
 
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include <algorithm>
 
 enum KeySate 
